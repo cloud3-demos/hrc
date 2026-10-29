@@ -190,6 +190,20 @@ footer .fine{border-top:1px solid #2C3039;margin-top:44px;padding-top:24px;font-
 .hero>img.slide.out{opacity:0;transform:scale(1.08)}
 @keyframes slideZoom{from{transform:scale(1)}to{transform:scale(1.08)}}
 @media(prefers-reduced-motion:reduce){.hero>img.slide.on{animation:none}}
+
+/* 360 views on gallery cards (Pannellum) */
+.gal .gimg{position:relative;overflow:hidden}
+.gal .has-pano{cursor:pointer}
+.gal .has-pano img{transition:transform .5s}
+.gal .has-pano:hover img{transform:scale(1.04)}
+.p360{position:absolute;left:14px;bottom:14px;background:rgba(15,27,43,.85);color:#fff;font-weight:700;font-size:13px;padding:8px 14px;border-radius:999px;box-shadow:0 6px 18px -4px color-mix(in srgb,var(--acc) 60%,transparent)}
+.p360:before{content:"⟲ ";color:var(--acc2)}
+.pmodal{position:fixed;inset:0;z-index:80;background:rgba(8,12,20,.82);display:none;align-items:center;justify-content:center;padding:24px}
+.pmodal.on{display:flex}
+.pbox{position:relative;width:min(1100px,100%);background:#0F1B2B;border-radius:22px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+#pview{width:100%;height:min(70vh,620px)}
+.pclose{position:absolute;top:12px;right:12px;z-index:5;width:40px;height:40px;border-radius:50%;border:0;background:#fff;font-size:24px;cursor:pointer}
+.pnote{color:#B8BCC6;font-size:14px;padding:14px 20px}
 </style>
 </head>
 <body>
@@ -230,10 +244,10 @@ footer .fine{border-top:1px solid #2C3039;margin-top:44px;padding-top:24px;font-
 <section class="ba-sec" id="projects"><div class="wrap">
 <p class="eyebrow">Our projects</p>
 <h2 class="h2">More from our job sites</h2>
-<p class="lead">Photos from HRC projects across Hamilton.</p>
-<div class="gal"><figure><img src="img/backyard.webp" alt="Finished backyard with a cedar gazebo and patio seating" style="object-position:center"><figcaption><b>Backyard renovation</b><span>Gazebo, patio and landscaping</span></figcaption></figure><figure><img src="img/mohawk-ceiling.webp" alt="Open ceiling and new framing inside the Mohawk commercial unit" style="object-position:center"><figcaption><b>Mohawk store demo and reno</b><span>Ceiling and services opened up</span></figcaption></figure><figure><img src="img/basement-drywall.webp" alt="Basement with drywall and pot lights going in" style="object-position:50% 40%"><figcaption><b>Basement renovation</b><span>Drywall and lighting stage</span></figcaption></figure></div>
+<p class="lead">Photos from HRC projects across Hamilton. Tap a 360° view to look around.</p>
+<div class="gal"><figure data-pano="img/pano/backyard-360.jpg" data-vaov="152.7" data-title="Backyard renovation" class="has-pano" tabindex="0"><div class="gimg"><img src="img/backyard.webp" alt="Finished backyard with a cedar gazebo and patio seating" style="object-position:center"><span class="p360">360° view</span></div><figcaption><b>Backyard renovation</b><span>Gazebo, patio and landscaping</span></figcaption></figure><figure data-pano="img/pano/mohawk-360.jpg" data-vaov="152.7" data-title="Mohawk store demo and reno" class="has-pano" tabindex="0"><div class="gimg"><img src="img/mohawk-ceiling.webp" alt="Open ceiling and new framing inside the Mohawk commercial unit" style="object-position:center"><span class="p360">360° view</span></div><figcaption><b>Mohawk store demo and reno</b><span>Ceiling and services opened up</span></figcaption></figure><figure data-pano="img/pano/basement-360.jpg" data-vaov="152.7" data-title="Basement renovation" class="has-pano" tabindex="0"><div class="gimg"><img src="img/basement-drywall.webp" alt="Basement with drywall and pot lights going in" style="object-position:50% 40%"><span class="p360">360° view</span></div><figcaption><b>Basement renovation</b><span>Drywall and lighting stage</span></figcaption></figure></div>
 </div></section>
-<section id="how"><div class="wrap">
+<div class="pmodal" id="pmodal"><div class="pbox"><button type="button" class="pclose" aria-label="Close">×</button><div id="pview"></div><p class="pnote">Drag to look around. The original photo is real, and the rest of the 360 view is extended with AI.</p></div></div><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.css"><script src="https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.js"></script><section id="how"><div class="wrap">
 <p class="eyebrow">How we work</p>
 <h2 class="h2">A renovation without the stress</h2>
 <div class="steps"><div class="step"><b>01</b><h3>Free consultation</h3><p>We visit, listen to your vision and talk through your budget.</p></div><div class="step"><b>02</b><h3>Clear estimate</h3><p>A detailed quote and timeline before any work starts.</p></div><div class="step"><b>03</b><h3>We build it</h3><p>Our designers and trades handle every stage, with one point of contact.</p></div><div class="step"><b>04</b><h3>Final walkthrough</h3><p>We walk the finished space with you and make sure it’s right.</p></div></div>
@@ -293,6 +307,12 @@ function pick(c,fly){chips.forEach(function(b){b.classList.toggle('on',b.dataset
 chips.forEach(function(b){b.addEventListener('click',function(){pick(b.dataset.c,true)})})})();
 (function(){var sl=document.querySelectorAll('.hero .slide');if(sl.length<2)return;var i=0;
 setInterval(function(){var a=sl[i];i=(i+1)%sl.length;var b=sl[i];a.classList.remove('on');a.classList.add('out');b.classList.remove('out');void b.offsetWidth;b.classList.add('on');setTimeout(function(){a.classList.remove('out')},1700)},8000)})();
+(function(){var m=document.getElementById('pmodal');if(!m)return;var v=null;
+function open(f){m.classList.add('on');document.body.style.overflow='hidden';if(v){v.destroy()}
+v=pannellum.viewer('pview',{type:'equirectangular',panorama:f.dataset.pano,haov:360,vaov:+f.dataset.vaov,autoLoad:true,autoRotate:-2,showFullscreenCtrl:true,hfov:100,title:f.dataset.title})}
+function close(){m.classList.remove('on');document.body.style.overflow='';if(v){v.destroy();v=null}}
+document.querySelectorAll('figure.has-pano').forEach(function(f){f.addEventListener('click',function(){open(f)});f.addEventListener('keydown',function(e){if(e.key=='Enter')open(f)})});
+m.querySelector('.pclose').addEventListener('click',close);m.addEventListener('click',function(e){if(e.target===m)close()});document.addEventListener('keydown',function(e){if(e.key=='Escape')close()})})();
 function upl(i){var n=i.files.length,t=i.parentNode.querySelector('.up-t');t.textContent=n?(n==1?i.files[0].name:n+' photos added'):'Add photos';i.parentNode.classList.toggle('on',n>0)}
 function toast(){var t=document.getElementById('toast');t.classList.add('on');setTimeout(function(){t.classList.remove('on')},3200)}
 </script>

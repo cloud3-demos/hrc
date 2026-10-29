@@ -175,6 +175,14 @@ footer .fine{border-top:1px solid #2C3039;margin-top:44px;padding-top:24px;font-
 @keyframes heroZoom{from{transform:scale(1)}to{transform:scale(1.08)}}
 .hero>img{animation:heroZoom 18s ease-in-out infinite alternate;will-change:transform}
 @media(prefers-reduced-motion:reduce){.hero>img{animation:none}}
+
+.areas button{border:1px solid var(--line);border-radius:999px;padding:10px 20px;font:600 15px 'DM Sans',Arial,sans-serif;background:#fff;color:var(--ink);cursor:pointer;transition:all .2s}
+.areas button:hover{border-color:var(--acc)}
+.areas button.on{background:var(--acc);border-color:var(--acc);color:#fff;box-shadow:0 6px 18px -6px color-mix(in srgb,var(--acc) 60%,transparent)}
+.amap{height:420px;margin-top:28px;border-radius:22px;border:1px solid var(--line);overflow:hidden;z-index:1}
+.pin span{display:block;width:26px;height:26px;border-radius:50% 50% 50% 0;background:var(--acc);transform:rotate(-45deg);border:3px solid #fff;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.leaflet-popup-content{font-family:'DM Sans',Arial,sans-serif;font-size:14px}
+@media(max-width:640px){.amap{height:320px}}
 </style>
 </head>
 <body>
@@ -239,7 +247,7 @@ footer .fine{border-top:1px solid #2C3039;margin-top:44px;padding-top:24px;font-
 <p class="eyebrow">Service areas</p>
 <h2 class="h2">Serving Hamilton and the surrounding area</h2>
 <p class="lead">Each area gets its own page, so Google shows HRC when people search “renovation” plus their city.</p>
-<div class="areas"><span>Hamilton</span><span>Stoney Creek</span><span>Ancaster</span><span>Dundas</span><span>Waterdown</span><span>Binbrook</span><span>Burlington</span><span>Grimsby</span></div>
+<div class="areas"><button type="button" data-c="Hamilton" class=on>Hamilton</button><button type="button" data-c="Stoney Creek">Stoney Creek</button><button type="button" data-c="Ancaster">Ancaster</button><button type="button" data-c="Dundas">Dundas</button><button type="button" data-c="Waterdown">Waterdown</button><button type="button" data-c="Binbrook">Binbrook</button><button type="button" data-c="Burlington">Burlington</button><button type="button" data-c="Grimsby">Grimsby</button></div><div id="amap" class="amap"></div><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"><script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script><script>var AREAS={"Hamilton": [43.2557, -79.8711], "Stoney Creek": [43.2175, -79.763], "Ancaster": [43.2177, -79.987], "Dundas": [43.2665, -79.955], "Waterdown": [43.335, -79.893], "Binbrook": [43.123, -79.809], "Burlington": [43.3255, -79.799], "Grimsby": [43.2, -79.561]};</script>
 </div></section>
 <section style="background:var(--bg)" id="reviews"><div class="wrap">
 <p class="eyebrow">Reviews</p>
@@ -268,6 +276,14 @@ document.querySelectorAll('.ba').forEach(function(ba){var top=ba.querySelector('
 function set(x){var r=ba.getBoundingClientRect(),p=Math.max(0,Math.min(100,(x-r.left)/r.width*100));top.style.clipPath='inset(0 0 0 '+p+'%)';h.style.left=p+'%'}
 ba.addEventListener('pointerdown',function(e){drag=true;ba.setPointerCapture(e.pointerId);set(e.clientX)});
 ba.addEventListener('pointermove',function(e){if(drag)set(e.clientX)});ba.addEventListener('pointerup',function(){drag=false})});
+(function(){var chips=document.querySelectorAll('.areas button');if(!window.AREAS||!window.L){return}
+var m=L.map('amap',{scrollWheelZoom:false}),pins={},pts=[];
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap contributors'}).addTo(m);
+var ic=L.divIcon({className:'pin',html:'<span></span>',iconSize:[26,26],iconAnchor:[13,26],popupAnchor:[0,-24]});
+for(var c in AREAS){pins[c]=L.marker(AREAS[c],{icon:ic}).addTo(m).bindPopup('<b>'+c+'</b>');pins[c].on('click',(function(n){return function(){pick(n,false)}})(c));pts.push(AREAS[c])}
+m.fitBounds(pts,{padding:[40,40]});
+function pick(c,fly){chips.forEach(function(b){b.classList.toggle('on',b.dataset.c==c)});if(fly&&pins[c]){m.flyTo(AREAS[c],12,{duration:.8});pins[c].openPopup()}}
+chips.forEach(function(b){b.addEventListener('click',function(){pick(b.dataset.c,true)})})})();
 function upl(i){var n=i.files.length,t=i.parentNode.querySelector('.up-t');t.textContent=n?(n==1?i.files[0].name:n+' photos added'):'Add photos';i.parentNode.classList.toggle('on',n>0)}
 function toast(){var t=document.getElementById('toast');t.classList.add('on');setTimeout(function(){t.classList.remove('on')},3200)}
 </script>

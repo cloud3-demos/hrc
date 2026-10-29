@@ -183,10 +183,17 @@ footer .fine{border-top:1px solid #2C3039;margin-top:44px;padding-top:24px;font-
 .pin span{display:block;width:26px;height:26px;border-radius:50% 50% 50% 0;background:var(--acc);transform:rotate(-45deg);border:3px solid #fff;box-shadow:0 4px 12px rgba(0,0,0,.3)}
 .leaflet-popup-content{font-family:'DM Sans',Arial,sans-serif;font-size:14px}
 @media(max-width:640px){.amap{height:320px}}
+
+/* multi-image hero: each slide zooms in over 8s, then crossfades into the next */
+.hero>img.slide{opacity:0;animation:none;transform:scale(1);transition:opacity 1.6s ease}
+.hero>img.slide.on{opacity:1;animation:slideZoom 9.6s ease-out forwards}
+.hero>img.slide.out{opacity:0;transform:scale(1.08)}
+@keyframes slideZoom{from{transform:scale(1)}to{transform:scale(1.08)}}
+@media(prefers-reduced-motion:reduce){.hero>img.slide.on{animation:none}}
 </style>
 </head>
 <body>
-<div class="demo-bar">Demo built by Cloud3 Digital for HRC. Project photos and reviews are from buildhrc.ca, the hero image is an illustration, and the rest is placeholder copy until we finalise it with you.</div>
+<div class="demo-bar">Demo built by Cloud3 Digital for HRC. Project photos and reviews are from buildhrc.ca, the hero images are illustrations, and the rest is placeholder copy until we finalise it with you.</div>
 <div class="top"><div class="wrap">
   <span>📞 <a href="tel:+19059063458">905-906-3458</a></span>
   <span class="hide-m">📍 88 John Street South, Hamilton</span>
@@ -194,7 +201,7 @@ footer .fine{border-top:1px solid #2C3039;margin-top:44px;padding-top:24px;font-
 </div></div>
 <nav><div class="wrap"><a href="#" class="logo"><span class="logo"><i><b style="color:#fff;font-size:11px;font-family:var(--fh)">HRC</b></i>Hamilton Renovation <b>Co.</b></span></a><div class="links"><a href="#services">Services</a><a href="#projects">Projects</a><a href="#how">How we work</a><a href="#reviews">Reviews</a><a href="#faq">FAQ</a></div><a href="#quote" class="btn dark">Free Estimate <span class="arr">↗</span></a></div></nav>
 <header class="hero">
-  <img src="img/hero-reno.webp" alt="Illustration of a renovated open-concept kitchen and dining room with navy cabinets, a quartz island and exposed brick" style="object-position:60% 50%">
+  <img class="slide on" src="img/hero-reno.webp" alt="Illustration of a renovated open-concept kitchen and dining room with navy cabinets, a quartz island and exposed brick" style="object-position:60% 50%"><img class="slide" src="img/hero-exterior.webp" alt="Illustration of a renovated red brick century home at dusk with black windows, a navy door and a cedar front porch" style="object-position:65% 45%">
   <div class="wrap">
     <h1><em>Hamilton Renovation Co.</em>Renovations and New Builds, Done Right in Hamilton</h1>
     <p>From finished basements and full home renovations to new builds and commercial fit-outs, our family run team handles the whole project and keeps it on budget.</p>
@@ -284,6 +291,8 @@ for(var c in AREAS){pins[c]=L.marker(AREAS[c],{icon:ic}).addTo(m).bindPopup('<b>
 m.fitBounds(pts,{padding:[40,40]});
 function pick(c,fly){chips.forEach(function(b){b.classList.toggle('on',b.dataset.c==c)});if(fly&&pins[c]){m.flyTo(AREAS[c],12,{duration:.8});pins[c].openPopup()}}
 chips.forEach(function(b){b.addEventListener('click',function(){pick(b.dataset.c,true)})})})();
+(function(){var sl=document.querySelectorAll('.hero .slide');if(sl.length<2)return;var i=0;
+setInterval(function(){var a=sl[i];i=(i+1)%sl.length;var b=sl[i];a.classList.remove('on');a.classList.add('out');b.classList.remove('out');void b.offsetWidth;b.classList.add('on');setTimeout(function(){a.classList.remove('out')},1700)},8000)})();
 function upl(i){var n=i.files.length,t=i.parentNode.querySelector('.up-t');t.textContent=n?(n==1?i.files[0].name:n+' photos added'):'Add photos';i.parentNode.classList.toggle('on',n>0)}
 function toast(){var t=document.getElementById('toast');t.classList.add('on');setTimeout(function(){t.classList.remove('on')},3200)}
 </script>
